@@ -15,6 +15,9 @@ enum MilesPose: String, CaseIterable, Equatable {
     case upLeft
     case upRight
     case up
+    case downLeft
+    case downRight
+    case down
     case pet
     case bark
 
@@ -34,6 +37,12 @@ enum MilesPose: String, CaseIterable, Equatable {
             return "UP RIGHT"
         case .up:
             return "UP"
+        case .downLeft:
+            return "DOWN LEFT"
+        case .downRight:
+            return "DOWN RIGHT"
+        case .down:
+            return "DOWN"
         case .pet:
             return "PET"
         case .bark:
@@ -46,10 +55,10 @@ enum MilesPose: String, CaseIterable, Equatable {
         case .tilt:
             return 2
         case .pet:
-            return 4
+            return 3
         case .bark:
-            return 2
-        case .forward, .left, .right, .upLeft, .upRight, .up:
+            return 1
+        case .forward, .left, .right, .upLeft, .upRight, .up, .downLeft, .downRight, .down:
             return 1
         }
     }
@@ -57,13 +66,42 @@ enum MilesPose: String, CaseIterable, Equatable {
     var animationInterval: TimeInterval {
         switch self {
         case .bark:
-            return 0.12
+            return 0.45
         case .pet:
-            return 0.16
+            return 1.8
         case .tilt:
-            return 0.42
-        case .forward, .left, .right, .upLeft, .upRight, .up:
-            return 0.35
+            return 1.35
+        case .forward, .left, .right, .upLeft, .upRight, .up, .downLeft, .downRight, .down:
+            return 0.7
+        }
+    }
+
+    var assetBaseName: String {
+        switch self {
+        case .forward:
+            return "miles_alpha_forward"
+        case .tilt:
+            return "miles_alpha_tilt"
+        case .left:
+            return "miles_alpha_left"
+        case .right:
+            return "miles_alpha_right"
+        case .upLeft:
+            return "miles_alpha_up_left"
+        case .upRight:
+            return "miles_alpha_up_right"
+        case .up:
+            return "miles_alpha_up"
+        case .downLeft:
+            return "miles_alpha_down_left"
+        case .downRight:
+            return "miles_alpha_down_right"
+        case .down:
+            return "miles_alpha_down"
+        case .pet:
+            return "miles_alpha_pet"
+        case .bark:
+            return "miles_alpha_bark"
         }
     }
 }
@@ -83,5 +121,13 @@ struct MilesFrame: Equatable {
         }
 
         return "\(pose.label) \(variant + 1)"
+    }
+
+    var assetName: String {
+        guard pose.frameCount > 1 else {
+            return pose.assetBaseName
+        }
+
+        return "\(pose.assetBaseName)_\(variant + 1)"
     }
 }

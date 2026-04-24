@@ -1,0 +1,13 @@
+{
+  "images" : [
+    {
+      "filename" : "miles_alpha_forward.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

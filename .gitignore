@@ -11,3 +11,6 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# Local source/reference photos
+src-images/
