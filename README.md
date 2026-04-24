@@ -14,7 +14,7 @@ MilesMouse is a tiny macOS desktop companion prototype for Miles. Miles sits nea
   - Size: XXS, XS, S, Default, L, XL, XXL
   - Position: Left, Center, Right
   - Quit Miles
-- Custom dropped positions are saved. If a saved or dragged position would put Miles under the Dock, under the menu bar, or mostly offscreen, the app clamps him back into the usable screen area.
+- Custom dropped positions are saved. Miles can dip slightly into the Dock area to account for loose transparent sprite padding, but saved and dragged positions are clamped so he stays visible and reachable.
 - Choosing Left, Center, or Right clears the custom position and returns Miles to the Dock area.
 - A fresh app launch resets Miles to Default size, centered above the Dock. This keeps a bad saved position or oversized experiment from carrying across a hard quit.
 

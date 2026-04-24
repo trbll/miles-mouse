@@ -13,6 +13,7 @@ final class MilesPanelController: NSWindowController {
     private static let customWindowOriginXKey = "MilesCustomWindowOriginX"
     private static let customWindowOriginYKey = "MilesCustomWindowOriginY"
     private static let visibleFramePadding: CGFloat = 8
+    private static let dockOverlapAllowance: CGFloat = 36
 
     private let model = MilesMouseModel()
     private var selectedSize: MilesDisplaySize
@@ -193,8 +194,7 @@ final class MilesPanelController: NSWindowController {
             return
         }
 
-        let visibleFrame = screen.visibleFrame
-        let usableFrame = visibleFrame.insetBy(dx: Self.visibleFramePadding, dy: Self.visibleFramePadding)
+        let usableFrame = usableFrame(for: screen)
         let x: CGFloat
 
         switch selectedDockPosition {
@@ -289,7 +289,7 @@ final class MilesPanelController: NSWindowController {
             return origin
         }
 
-        let usableFrame = screen.visibleFrame.insetBy(dx: Self.visibleFramePadding, dy: Self.visibleFramePadding)
+        let usableFrame = usableFrame(for: screen)
         let x = clampedAxisOrigin(
             origin.x,
             contentLength: window.frame.width,
@@ -304,6 +304,23 @@ final class MilesPanelController: NSWindowController {
         )
 
         return NSPoint(x: round(x), y: round(y))
+    }
+
+    private func usableFrame(for screen: NSScreen) -> NSRect {
+        let visibleFrame = screen.visibleFrame
+        let screenFrame = screen.frame
+        let minimumY = max(
+            screenFrame.minY + Self.visibleFramePadding,
+            visibleFrame.minY - Self.dockOverlapAllowance
+        )
+        let maximumY = visibleFrame.maxY - Self.visibleFramePadding
+
+        return NSRect(
+            x: visibleFrame.minX + Self.visibleFramePadding,
+            y: minimumY,
+            width: visibleFrame.width - Self.visibleFramePadding * 2,
+            height: maximumY - minimumY
+        )
     }
 
     private func clampedAxisOrigin(

@@ -12,5 +12,8 @@ xcuserdata/
 # macOS
 .DS_Store
 
+# Local install helper
+install.sh
+
 # Local source/reference photos
 src-images/

@@ -15,6 +15,9 @@ final class MilesMouseModel: ObservableObject {
     private let initialPetTravelThreshold: CGFloat = 45
     private let petVariantTravelInterval: CGFloat = 320
     private let tiltDistanceThreshold: CGFloat = 110
+    private let upwardLookThreshold: CGFloat = 150
+    private let downwardLookThreshold: CGFloat = -65
+    private let sideLookThreshold: CGFloat = 70
 
     private var currentPose: MilesPose
     private var currentVariant = 0
@@ -116,35 +119,35 @@ final class MilesMouseModel: ObservableObject {
             return .tilt
         }
 
-        if dy > 150 {
-            if dx < -70 {
+        if dy > upwardLookThreshold {
+            if dx < -sideLookThreshold {
                 return .upLeft
             }
 
-            if dx > 70 {
+            if dx > sideLookThreshold {
                 return .upRight
             }
 
             return .up
         }
 
-        if dy < -135 {
-            if dx < -70 {
+        if dy < downwardLookThreshold {
+            if dx < -sideLookThreshold {
                 return .downLeft
             }
 
-            if dx > 70 {
+            if dx > sideLookThreshold {
                 return .downRight
             }
 
             return .down
         }
 
-        if dx < -70 {
+        if dx < -sideLookThreshold {
             return .left
         }
 
-        if dx > 70 {
+        if dx > sideLookThreshold {
             return .right
         }
 
