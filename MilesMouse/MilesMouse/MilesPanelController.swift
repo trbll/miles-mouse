@@ -26,6 +26,12 @@ final class MilesPanelController: NSWindowController {
         window?.isVisible == true
     }
 
+    static func resetSavedPlacement() {
+        MilesDisplaySize.resetSavedValue()
+        MilesDockPosition.resetSavedValue()
+        removeSavedCustomWindowOrigin()
+    }
+
     init() {
         let initialSize = MilesDisplaySize.savedValue
         let panelSize = Self.panelSize(for: initialSize)
@@ -337,8 +343,12 @@ final class MilesPanelController: NSWindowController {
     }
 
     private func removeCustomWindowOrigin() {
-        UserDefaults.standard.removeObject(forKey: Self.customWindowOriginXKey)
-        UserDefaults.standard.removeObject(forKey: Self.customWindowOriginYKey)
+        Self.removeSavedCustomWindowOrigin()
+    }
+
+    private static func removeSavedCustomWindowOrigin() {
+        UserDefaults.standard.removeObject(forKey: customWindowOriginXKey)
+        UserDefaults.standard.removeObject(forKey: customWindowOriginYKey)
     }
 
     @objc private func hideMilesFromMenu() {
@@ -457,6 +467,10 @@ private enum MilesDisplaySize: String, CaseIterable {
     func save() {
         UserDefaults.standard.set(rawValue, forKey: Self.defaultsKey)
     }
+
+    static func resetSavedValue() {
+        UserDefaults.standard.removeObject(forKey: defaultsKey)
+    }
 }
 
 private enum MilesDockPosition: String, CaseIterable {
@@ -490,5 +504,9 @@ private enum MilesDockPosition: String, CaseIterable {
 
     func save() {
         UserDefaults.standard.set(rawValue, forKey: Self.defaultsKey)
+    }
+
+    static func resetSavedValue() {
+        UserDefaults.standard.removeObject(forKey: defaultsKey)
     }
 }

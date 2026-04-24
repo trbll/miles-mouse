@@ -16,6 +16,7 @@ MilesMouse is a tiny macOS desktop companion prototype for Miles. Miles sits nea
   - Quit Miles
 - Custom dropped positions are saved. If a saved or dragged position would put Miles under the Dock, under the menu bar, or mostly offscreen, the app clamps him back into the usable screen area.
 - Choosing Left, Center, or Right clears the custom position and returns Miles to the Dock area.
+- A fresh app launch resets Miles to Default size, centered above the Dock. This keeps a bad saved position or oversized experiment from carrying across a hard quit.
 
 ## Assets
 
@@ -31,10 +32,11 @@ Source folders are kept at the repo root:
 alpha-images/   background-removed working sprites
 raw-images/     original generated sprite crops
 ref-sprites/    reference sprite sheets
-src-images/     original Miles photo references
 ```
 
 The older non-alpha `miles_*` assets are still in the asset catalog so we can switch back if needed.
+
+`src-images/` is intentionally ignored and should stay local-only. It is for original Miles photo references, not for the public GitHub repo.
 
 ## Build
 
@@ -46,6 +48,6 @@ xcodebuild -project MilesMouse/MilesMouse.xcodeproj -scheme MilesMouse -configur
 
 ## Notes
 
-- Panel positioning and selected size are stored in `UserDefaults`.
-- If Miles is manually dropped somewhere, the saved custom position is reused on next launch after being clamped to the current screen.
+- Panel positioning and selected size are stored while the app is running so hide/show and menu changes behave consistently.
+- On a fresh launch, saved placement settings are cleared before Miles appears.
 - The menu position choices are the quickest way to recover a known Dock-adjacent position.

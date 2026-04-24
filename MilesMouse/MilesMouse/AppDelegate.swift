@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var panelController: MilesPanelController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        MilesPanelController.resetSavedPlacement()
         showMiles()
     }
 
