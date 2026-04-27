@@ -22,6 +22,12 @@ uv run python remove_backgrounds.py --dry-run
 uv run python remove_backgrounds.py --limit 1 --overwrite
 ```
 
+Recommended full refresh for the app:
+
+```sh
+uv run python remove_backgrounds.py --overwrite --sync-xcode-assets
+```
+
 Run all missing outputs:
 
 ```sh
@@ -32,12 +38,6 @@ Regenerate everything:
 
 ```sh
 uv run python remove_backgrounds.py --overwrite
-```
-
-Regenerate everything and update the Xcode asset catalog used by the app:
-
-```sh
-uv run python remove_backgrounds.py --overwrite --sync-xcode-assets
 ```
 
 ## Run With pip
@@ -73,3 +73,5 @@ By default, existing outputs are skipped to avoid accidental Replicate runs. Use
 ## Xcode Asset Sync
 
 The app builds from `MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_*.imageset`, not directly from `alpha-images/`. Use `--sync-xcode-assets` after generating alpha images so Xcode picks up the refreshed sprites on the next build or run.
+
+The sync step copies the generated files into matching `miles_alpha_*` asset sets. Keep both `alpha-images/` and the asset catalog images committed when accepting a new background-removal pass.

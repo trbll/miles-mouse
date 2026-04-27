@@ -20,23 +20,47 @@ MilesMouse is a tiny macOS desktop companion prototype for Miles. Miles sits nea
 
 ## Assets
 
-The app currently uses alpha-cutout assets in:
+The app builds from alpha-cutout assets in:
 
 ```text
 MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_*.imageset
 ```
 
-Source folders are kept at the repo root:
+The source and working folders live at the repo root:
 
 ```text
-alpha-images/   background-removed working sprites
-raw-images/     original generated sprite crops
+raw-images/     source sprite crops before background removal
+alpha-images/   background-removed working sprites generated from raw-images
 ref-sprites/    reference sprite sheets
 ```
+
+`alpha-images/` is useful for reviewing generated cutouts, but Xcode does not read it directly. After regenerating sprites, sync them into the `miles_alpha_*` asset catalog entries before building the app.
 
 The older non-alpha `miles_*` assets are still in the asset catalog so we can switch back if needed.
 
 `src-images/` is intentionally ignored and should stay local-only. It is for original Miles photo references, not for the public GitHub repo.
+
+## Background Removal
+
+Background removal is handled by the utility in:
+
+```text
+utilities/bg-removal/
+```
+
+Add a repo-root `.env` file with your Replicate token:
+
+```sh
+REPLICATE_API_TOKEN=<paste-your-token-here>
+```
+
+Then run the full refresh from `utilities/bg-removal`:
+
+```sh
+uv run python remove_backgrounds.py --overwrite --sync-xcode-assets
+```
+
+That command regenerates every file in `alpha-images/` from `raw-images/`, then copies those outputs into the Xcode asset catalog used by the app.
 
 ## Build
 
@@ -44,6 +68,22 @@ Open `MilesMouse/MilesMouse.xcodeproj` in Xcode and run the `MilesMouse` scheme,
 
 ```sh
 xcodebuild -project MilesMouse/MilesMouse.xcodeproj -scheme MilesMouse -configuration Debug build
+```
+
+For a release app bundle in the repo-local build folder:
+
+```sh
+xcodebuild -project MilesMouse/MilesMouse.xcodeproj \
+  -scheme MilesMouse \
+  -configuration Release \
+  -derivedDataPath build/DerivedData \
+  build
+```
+
+The release app is written to:
+
+```text
+build/DerivedData/Build/Products/Release/MilesMouse.app
 ```
 
 ## Notes
