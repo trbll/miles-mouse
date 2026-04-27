@@ -9,8 +9,18 @@ xcuserdata/
 .build/
 .swiftpm/
 
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+
 # macOS
 .DS_Store
+
+# Environment files
+.env
+.env.*
+!.env.example
 
 # Local install helper
 install.sh

@@ -1,0 +1,12 @@
+[project]
+name = "miles-bg-removal"
+version = "0.1.0"
+description = "Replicate background-removal utility for MilesMouse sprite assets"
+requires-python = ">=3.11"
+dependencies = [
+  "python-dotenv>=1.0.1",
+  "replicate>=1.0.4",
+]
+
+[tool.uv]
+package = false
