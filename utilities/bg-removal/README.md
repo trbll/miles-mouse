@@ -34,6 +34,12 @@ Regenerate everything:
 uv run python remove_backgrounds.py --overwrite
 ```
 
+Regenerate everything and update the Xcode asset catalog used by the app:
+
+```sh
+uv run python remove_backgrounds.py --overwrite --sync-xcode-assets
+```
+
 ## Run With pip
 
 From this directory:
@@ -63,3 +69,7 @@ raw-images/bark-1.jpg  -> alpha-images/bark-1.png
 ```
 
 By default, existing outputs are skipped to avoid accidental Replicate runs. Use `--overwrite` when you want to replace them.
+
+## Xcode Asset Sync
+
+The app builds from `MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_*.imageset`, not directly from `alpha-images/`. Use `--sync-xcode-assets` after generating alpha images so Xcode picks up the refreshed sprites on the next build or run.

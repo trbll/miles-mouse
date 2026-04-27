@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import shutil
 from pathlib import Path
 from typing import Iterable
 from urllib.request import urlopen
@@ -10,6 +11,23 @@ from urllib.request import urlopen
 
 DEFAULT_MODEL = "bria/remove-background"
 SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
+XCODE_ASSET_MAP = {
+    "bark-1.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_bark.imageset/miles_alpha_bark.png",
+    "dir-down-left.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_down_left.imageset/miles_alpha_down_left.png",
+    "dir-down-right.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_down_right.imageset/miles_alpha_down_right.png",
+    "dir-down.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_down.imageset/miles_alpha_down.png",
+    "dir-left.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_left.imageset/miles_alpha_left.png",
+    "dir-right.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_right.imageset/miles_alpha_right.png",
+    "dir-up-left.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_up_left.imageset/miles_alpha_up_left.png",
+    "dir-up-right.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_up_right.imageset/miles_alpha_up_right.png",
+    "dir-up.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_up.imageset/miles_alpha_up.png",
+    "forward.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_forward.imageset/miles_alpha_forward.png",
+    "pet-1.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_pet_1.imageset/miles_alpha_pet_1.png",
+    "pet-2.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_pet_2.imageset/miles_alpha_pet_2.png",
+    "pet-3.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_pet_3.imageset/miles_alpha_pet_3.png",
+    "tilt-1.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_tilt_1.imageset/miles_alpha_tilt_1.png",
+    "tilt-2.png": "MilesMouse/MilesMouse/Assets.xcassets/miles_alpha_tilt_2.imageset/miles_alpha_tilt_2.png",
+}
 
 
 def main() -> int:
@@ -40,6 +58,8 @@ def main() -> int:
             if output_path.exists() and not args.overwrite:
                 action = "skip"
             print(f"{action}: {image_path} -> {output_path}")
+        if args.sync_xcode_assets:
+            sync_xcode_assets(repo_root, output_dir, dry_run=True)
         return 0
 
     load_env(repo_root)
@@ -60,6 +80,9 @@ def main() -> int:
             )
 
         write_output(output, output_path)
+
+    if args.sync_xcode_assets:
+        sync_xcode_assets(repo_root, output_dir)
 
     return 0
 
@@ -100,6 +123,11 @@ def parse_args(repo_root: Path) -> argparse.Namespace:
         "--dry-run",
         action="store_true",
         help="Print planned work without loading Replicate or making API calls.",
+    )
+    parser.add_argument(
+        "--sync-xcode-assets",
+        action="store_true",
+        help="Copy alpha-images outputs into the MilesMouse asset catalog after processing.",
     )
     return parser.parse_args()
 
@@ -152,6 +180,30 @@ def write_output(output: object, output_path: Path) -> None:
     temp_path.write_bytes(data)
     temp_path.replace(output_path)
     print(f"wrote: {output_path}")
+
+
+def sync_xcode_assets(repo_root: Path, output_dir: Path, dry_run: bool = False) -> None:
+    missing_sources = []
+
+    for source_name, destination_relative_path in XCODE_ASSET_MAP.items():
+        source_path = output_dir / source_name
+        destination_path = repo_root / destination_relative_path
+
+        if not source_path.exists():
+            missing_sources.append(source_path)
+            continue
+
+        if dry_run:
+            print(f"sync: {source_path} -> {destination_path}")
+            continue
+
+        destination_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_path, destination_path)
+        print(f"synced: {destination_path}")
+
+    if missing_sources:
+        missing = "\n".join(f"- {path}" for path in missing_sources)
+        raise SystemExit(f"Missing alpha output files for Xcode asset sync:\n{missing}")
 
 
 def read_output_bytes(output: object) -> bytes:
